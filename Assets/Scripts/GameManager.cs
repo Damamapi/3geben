@@ -8,18 +8,21 @@ public class GameManager : MonoBehaviour
     public HandDisplay handDisplay;
     public Board board;
     public Deck deck;
+    public RoundManager roundManager;
+
+    private void Start()
+    {
+        DealHand(10);
+        
+    }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            DealHand(5);
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            handDisplay.SetCardPositions();
-        }
+        // if (Input.GetKeyDown(KeyCode.C)) handDisplay.SetCardPositions();
     }
 
     public void DealHand(int amountOfCards)

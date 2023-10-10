@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,18 +6,20 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private List<GameObject> hand = new List<GameObject>();
-    
-    private int cats = 0;
+    // public event Action<bool> OnCardOnHandChanged;
+
+    // private int cats = 0;
 
     public HandDisplay handDisplay;
     public Board board;
     public Deck deck;
 
-    public GameObject PickCardToPlay(int positionInHand)
+    public GameObject PickCardToPlay(GameObject card)
     {
-        GameObject selectedCard = hand[positionInHand];
-        hand.RemoveAt(positionInHand);
+        GameObject selectedCard = card;
+        hand.Remove(card);
         handDisplay.RemoveCardFromHand(selectedCard);
+        selectedCard.GetComponent<HandCardInteraction>().IsOnHand = false;
         return selectedCard;
     }
 
@@ -29,5 +32,6 @@ public class Player : MonoBehaviour
     {
         hand.Add(card);
         handDisplay.AddCardToHand(card);
+        card.GetComponent<HandCardInteraction>().IsOnHand = true;
     } 
 }

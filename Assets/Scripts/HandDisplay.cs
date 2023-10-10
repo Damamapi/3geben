@@ -17,7 +17,7 @@ public class HandDisplay : MonoBehaviour
         card.transform.localPosition = Vector3.zero;
         card.transform.localRotation = Quaternion.identity;
 
-        // SetCardPositions();
+        SetCardPositions();
     }
 
 
@@ -25,12 +25,12 @@ public class HandDisplay : MonoBehaviour
     {
         displayedCards.Remove(card);
         card.transform.SetParent(null);
-        // SetCardPositions();
+        SetCardPositions();
     }
 
     public void SetCardPositions()
     {
-        Debug.Log("Setting cards");
+        // Debug.Log("Setting cards");
         int numCards = displayedCards.Count;
         float totalWidth = (numCards - 1) * cardSpacing;
         Vector3 leftmostPosition = handTransform.position - new Vector3(totalWidth / 2f, 0f, 0f);
@@ -46,7 +46,7 @@ public class HandDisplay : MonoBehaviour
 
             card.transform.localPosition = cardPosition;
 
-            Debug.Log("Card " + i + " Position: " + card.transform.position);
+            // Debug.Log("Card " + i + " Position: " + card.transform.position);
         }
     }
 }
