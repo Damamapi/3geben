@@ -21,6 +21,15 @@ public class RoundManager : MonoBehaviour
 
     public void StartRound()
     {
+
+        GetPlayersCard();
+        selectedCards.Sort(Card.SortByCardID);
+
+        
+    }
+
+    void GetPlayersCard()
+    {
         foreach (Player player in players)
         {
             foreach (GameObject card in player.GetHand())
@@ -36,10 +45,6 @@ public class RoundManager : MonoBehaviour
                 }
             }
         }
-
-        selectedCards.Sort(Card.SortByCardID);
-
-        
     }
 
     public void AddPlayer(Player player)

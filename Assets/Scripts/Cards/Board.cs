@@ -27,7 +27,35 @@ public class Board : MonoBehaviour
 
     private void Update()
     {
-        // if (Input.GetKeyDown(KeyCode.Space)) 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log(GetLowestValue());
+            UpdateBoardPosition();
+        }
+    }
+
+    public void AddCardToRow(GameObject card, List<GameObject> row)
+    {
+        if (row.Count <= 5)
+        {
+            row.Add(card);
+        }
+    }
+
+    (int id, int row) GetLowestValue()
+    {
+        int id = 104, row = 0;
+
+        for (int i = 0; i < boardRows.Count; i++)
+        {
+            Card card = boardRows[i][boardRows[i].Count - 1].GetComponent<Card>();
+            if (card.GetCardID() < id)
+            {
+                id = card.GetCardID();
+                row = i;
+            }
+        }
+        return (id, row);
     }
 
     void UpdateBoardPosition()
