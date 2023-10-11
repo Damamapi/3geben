@@ -60,9 +60,9 @@ public class Board : MonoBehaviour
 
     void UpdateBoardPosition()
     {
-        foreach (List<GameObject> row in boardRows)
+        for (int i = 0; i < boardRows.Count; i++)
         {
-            for (int i = 0;i < row.Count;i++)
+            for (int j = 0; j < boardRows[i].Count; j++)
             {
                 GameObject card = row[i];
                 Vector3 cardPosition = new Vector3(transform.position.x - horizontalPadding * 3f, 1f, transform.position.z - i * verticalPadding);
