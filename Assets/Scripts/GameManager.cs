@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         DealHand(10);
+        roundManager.players.Add(player);
         
     }
 
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            roundManager.StartRound();
         }
 
         // if (Input.GetKeyDown(KeyCode.C)) handDisplay.SetCardPositions();

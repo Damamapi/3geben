@@ -11,6 +11,8 @@ public class Board : MonoBehaviour
 
     private int numRows = 4;
 
+    public Transform boardTransform;
+
     private List<List<GameObject>> boardRows = new List<List<GameObject>>();
 
     void Awake()
@@ -29,17 +31,12 @@ public class Board : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log(GetLowestValue());
-            UpdateBoardPosition();
         }
     }
 
-    public void AddCardToRow(GameObject card, List<GameObject> row)
+    public void PlayCard(GameObject card)
     {
-        if (row.Count <= 5)
-        {
-            row.Add(card);
-        }
+        AddCardToRow(GetLowestValue().row, card);
     }
 
     (int id, int row) GetLowestValue()
@@ -64,9 +61,10 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < boardRows[i].Count; j++)
             {
-                GameObject card = row[i];
-                Vector3 cardPosition = new Vector3(transform.position.x - horizontalPadding * 3f, 1f, transform.position.z - i * verticalPadding);
-                card.transform.position = cardPosition;
+                GameObject card = boardRows[i][j];
+                float xPos = transform.position.x - horizontalPadding*2.5f + j * horizontalPadding;
+                float zPos = transform.position.y + verticalPadding*2 - i * verticalPadding;
+                card.transform.position = new Vector3(xPos, 0.1f, zPos);
             }
         }
     }
@@ -78,29 +76,25 @@ public class Board : MonoBehaviour
             GameObject card = deck.DrawRandomCard();
             if (card != null)
             {
-                Vector3 cardPosition = new Vector3(transform.position.x - horizontalPadding * 3f, 1f, transform.position.z - i * verticalPadding);
-
                 AddCardToRow( i, card);
-                card.transform.position = cardPosition;
+                card.transform.SetParent(boardTransform);
                 card.SetActive(true);
             }
         }
+        UpdateBoardPosition();
     }
 
     public void AddCardToRow(int row, GameObject card)
     {
         if (row >= 0 && row < numRows)
         {
-            boardRows[row].Add(card);
-        }
-    }
-
-    void DisplayCard(GameObject card)
-    {
-        if (card != null) 
-        {
-            card.transform.position = transform.position;
-            card.SetActive(true);
+            if (boardRows[row].Count < 5)
+            {
+                boardRows[row].Add(card);
+                card.SetActive(true);
+                card.transform.SetParent(boardTransform);
+                UpdateBoardPosition();
+            }
         }
     }
 }

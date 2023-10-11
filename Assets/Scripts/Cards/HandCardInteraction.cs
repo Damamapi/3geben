@@ -8,6 +8,10 @@ public class HandCardInteraction : MonoBehaviour
     private bool isHovered = false;
     public Card card;
 
+    public delegate void CardSelectedHandler(GameObject card);
+
+    public static event CardSelectedHandler CardSelected;
+
     private bool isSelected = false;
     private Material originalMaterial;
 
@@ -18,17 +22,20 @@ public class HandCardInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (isSelected)
+        if (isOnHand)
         {
-            transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
-        }
-        else if (isHovered)
-        {
-            transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
-        }
-        else
-        {
-            transform.localScale = Vector3.one;
+            // if (isSelected)
+            // {
+             //    transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+            // }
+            if (isHovered)
+            {
+                transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
+            }
+            else
+            {
+                transform.localScale = Vector3.one;
+            }
         }
     }
 
@@ -66,7 +73,7 @@ public class HandCardInteraction : MonoBehaviour
         {
             if (isOnHand)
             {
-                isSelected = !isSelected;
+                CardSelected?.Invoke(gameObject);
             }
         }
     }

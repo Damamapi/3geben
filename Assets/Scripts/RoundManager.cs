@@ -5,13 +5,19 @@ using UnityEngine;
 public class RoundManager : MonoBehaviour
 {
     private List<GameObject> selectedCards = new List<GameObject>();
-    private List<Player> players = new List<Player>();
+    public List<Player> players = new List<Player>();
 
     private Board board;
 
+    private GameManager gameManager;
+
     private void Start()
     {
-        board = GetComponentInParent<Board>();
+        gameManager = GetComponentInParent<GameManager>();
+        if (gameManager != null)
+        {
+            board = gameManager.board;
+        }
     }
 
     public void SelectCard(GameObject card)
@@ -21,29 +27,31 @@ public class RoundManager : MonoBehaviour
 
     public void StartRound()
     {
-
-        GetPlayersCard();
-        selectedCards.Sort(Card.SortByCardID);
-
-        
+        StartCoroutine(RoundCoroutine());
     }
 
-    void GetPlayersCard()
+    IEnumerator RoundCoroutine()
+    {
+        Debug.Log("Round has started, getting players card");
+
+        // Await the picking of all player cards before proceeding
+        yield return StartCoroutine(GetPlayersCardCoroutine());
+
+        Debug.Log("Cards selected");
+        selectedCards.Sort(Card.SortByCardID);
+
+        // Continue with the rest of your logic
+    }
+
+
+    IEnumerator GetPlayersCardCoroutine()
     {
         foreach (Player player in players)
         {
-            foreach (GameObject card in player.GetHand())
-            {
-                if (card != null)
-                {
-                    if (card.GetComponent<HandCardInteraction>().IsSelected)
-                    {
-                        SelectCard(card);
-                        player.PickCardToPlay(card);
-                        break;
-                    }
-                }
-            }
+            // This will now halt execution of this coroutine until the player has picked a card
+            yield return StartCoroutine(player.PickCardToPlayCoroutine());
+            Debug.Log("Player picked a card" + player.pickedCard.ToString());
+            board.PlayCard(player.pickedCard);
         }
     }
 

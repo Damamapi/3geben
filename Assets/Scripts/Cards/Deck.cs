@@ -6,6 +6,8 @@ public class Deck : MonoBehaviour
 {
     public List<GameObject> cards = new List<GameObject>();
 
+    private readonly int[] POINTMAP = { 1, 1, 1, 1, 2, 1, 1, 1, 1, 3, 5, 1, 1, 1, 2, 1, 1, 1, 1, 3, 1, 5, 1, 1, 2, 1, 1, 1, 1, 3, 1, 1, 5, 1, 2, 1, 1, 1, 1, 3, 1, 1, 1, 5, 2, 1, 1, 1, 1, 3, 1, 1, 1, 1, 7, 1, 1, 1, 1, 3, 1, 1, 1, 1, 2, 5, 1, 1, 1, 3, 1, 1, 1, 1, 2, 1, 5, 1, 1, 3, 1, 1, 1, 1, 2, 1, 1, 1, 3, 5, 1, 1, 1, 1, 2, 1, 1, 1, 5, 3, 1, 1, 1, 1};
+
     public GameObject cardPrefab;
 
 
@@ -15,7 +17,7 @@ public class Deck : MonoBehaviour
 
         for (int id = 1; id <= 104; id++)
         {
-            int points = SetCardPoints();
+            int points = SetCardPoints(id);
             GameObject card = Instantiate(cardPrefab, transform);
             Card cardInfo = card.GetComponent<Card>();
             cardInfo.SetCardID(id);
@@ -40,8 +42,8 @@ public class Deck : MonoBehaviour
         return drawnCard;
     }
 
-    private int SetCardPoints()
+    private int SetCardPoints(int id)
     {
-        return Random.Range(1, 5);
+        return POINTMAP[id-1];
     }
 }
