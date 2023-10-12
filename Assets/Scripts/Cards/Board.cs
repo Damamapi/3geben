@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -31,28 +33,47 @@ public class Board : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            
         }
     }
 
     public void PlayCard(GameObject card)
     {
-        AddCardToRow(GetLowestValue().row, card);
+        Card cardToPlay = card.GetComponent<Card>();
+        (int dif, int row) check = CheckRows(cardToPlay);
+        if (check.row > -1)
+        {
+            AddCardToRow(check.row, card);
+        }
+        else
+        {
+            Debug.Log("Card can't be placed");
+        }
     }
 
-    (int id, int row) GetLowestValue()
+    (int dif, int row) CheckRows(Card card)
     {
-        int id = 104, row = 0;
+        int dif = 105, row = -1;
+        bool canBePlaced = false;
+
+        Card lastCard;
 
         for (int i = 0; i < boardRows.Count; i++)
         {
-            Card card = boardRows[i][boardRows[i].Count - 1].GetComponent<Card>();
-            if (card.GetCardID() < id)
+            lastCard = boardRows[i][boardRows[i].Count - 1].GetComponent<Card>();
+            int difference = card.GetCardID() - lastCard.GetCardID();
+
+            if (difference > 0) 
             {
-                id = card.GetCardID();
-                row = i;
+                if (difference < dif)
+                {
+                    dif = difference;
+                    row = i;
+                    canBePlaced = true;
+                }
             }
         }
-        return (id, row);
+        return canBePlaced ? (dif, row) : (-1, -1);
     }
 
     void UpdateBoardPosition()
@@ -64,6 +85,8 @@ public class Board : MonoBehaviour
                 GameObject card = boardRows[i][j];
                 float xPos = transform.position.x - horizontalPadding*2.5f + j * horizontalPadding;
                 float zPos = transform.position.y + verticalPadding*2 - i * verticalPadding;
+                card.transform.rotation = Quaternion.identity;
+                card.transform.localScale = new Vector3(0.05714285f, 1, 0.1111111f);
                 card.transform.position = new Vector3(xPos, 0.1f, zPos);
             }
         }
@@ -76,9 +99,9 @@ public class Board : MonoBehaviour
             GameObject card = deck.DrawRandomCard();
             if (card != null)
             {
-                AddCardToRow( i, card);
                 card.transform.SetParent(boardTransform);
                 card.SetActive(true);
+                AddCardToRow( i, card);
             }
         }
         UpdateBoardPosition();

@@ -43,6 +43,7 @@ public class HandDisplay : MonoBehaviour
             // Preserve the current y and z positions, but set x to the calculated value
             cardPosition.y = card.transform.localPosition.y;
             cardPosition.z = card.transform.localPosition.z;
+            card.transform.rotation = Quaternion.Euler(0, 0, -2f);
 
             card.transform.localPosition = cardPosition;
 
