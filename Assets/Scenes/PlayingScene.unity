@@ -5106,8 +5106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173e7d07a085cb7439da17039b6dc5d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hand: []
   pickedCard: {fileID: 0}
-  cats: 66
   handDisplay: {fileID: 1848187508}
   board: {fileID: 1422065881}
   deck: {fileID: 1135897506}
