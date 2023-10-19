@@ -8,7 +8,7 @@ public class RoundManager : MonoBehaviour
     public List<Player> players = new List<Player>();
 
     private Board board;
-
+    private Deck deck;
     private GameManager gameManager;
 
     private void Start()
@@ -16,6 +16,7 @@ public class RoundManager : MonoBehaviour
         gameManager = GetComponentInParent<GameManager>();
         if (gameManager != null)
         {
+            deck = gameManager.deck;
             board = gameManager.board;
         }
     }
@@ -25,22 +26,47 @@ public class RoundManager : MonoBehaviour
         selectedCards.Add(card);
     }
 
-    public void StartRound()
+    public void StartDealRound()
     {
-        StartCoroutine(RoundCoroutine());
+        board.SetupBoard();
+        foreach (Player player in players)
+        {
+            DealHand(7, player);
+        }
+        StartRound();
     }
 
-    IEnumerator RoundCoroutine()
+    public void DealHand(int amountOfCards, Player player)
     {
-        Debug.Log("Round has started, getting players card");
+        for (int i = 0; i < amountOfCards; i++)
+        {
+            player.AddCardToHand(deck.DrawRandomCard());
+        }
+    }
 
+    public void StartRound()
+    {
+        StartCoroutine(PlayCardRound());
+    }
+
+    IEnumerator PlayCardRound()
+    {
         // Await the picking of all player cards before proceeding
         yield return StartCoroutine(GetPlayersCardCoroutine());
-
-        Debug.Log("Cards selected");
         selectedCards.Sort(Card.SortByCardID);
+        
+        // Play the cards selected
+        foreach (GameObject card in selectedCards)
+        {
+            board.PlayCard(card);
+        }
+        selectedCards.Clear();
 
-        // Continue with the rest of your logic
+        if (players[0].hand.Count > 0)
+        {
+            StartCoroutine(PlayCardRound());
+        }
+        else StartDealRound();
     }
 
 
@@ -48,10 +74,9 @@ public class RoundManager : MonoBehaviour
     {
         foreach (Player player in players)
         {
-            // This will now halt execution of this coroutine until the player has picked a card
+            // Halt execution of this coroutine until the player has picked a card
             yield return StartCoroutine(player.PickCardToPlayCoroutine());
-            Debug.Log("Player picked a card" + player.pickedCard.ToString());
-            board.PlayCard(player.pickedCard);
+            SelectCard(player.pickedCard);
         }
     }
 

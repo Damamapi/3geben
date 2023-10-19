@@ -8,6 +8,8 @@ public class Card : MonoBehaviour
     private int cardID;
     private int cats = 1;
 
+    public Player owner;
+
     public TextMeshProUGUI idText;
     public TextMeshProUGUI catsText;
 

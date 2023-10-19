@@ -71,10 +71,7 @@ public class HandCardInteraction : MonoBehaviour
     {
         if (isOnHand)
         {
-            if (isOnHand)
-            {
-                CardSelected?.Invoke(gameObject);
-            }
+            CardSelected?.Invoke(gameObject);
         }
     }
 }

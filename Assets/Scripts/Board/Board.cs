@@ -8,6 +8,7 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
     public Deck deck;
+    public RowIndicator rowIndicator;
     public float verticalPadding;
     public float horizontalPadding;
 
@@ -19,21 +20,9 @@ public class Board : MonoBehaviour
 
     void Awake()
     {
-        deck.InitializeDeck();
-
         for (int i = 0; i < numRows; i++)
         {
             boardRows.Add(new List<GameObject>());
-        }
-
-        SetupBoard();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            
         }
     }
 
@@ -43,12 +32,33 @@ public class Board : MonoBehaviour
         (int dif, int row) check = CheckRows(cardToPlay);
         if (check.row > -1)
         {
-            AddCardToRow(check.row, card);
+            if (boardRows[check.row].Count < 5)
+            {
+                AddCardToRow(check.row, card);
+            }
+            else
+            {
+                EatRow(check.row, card, cardToPlay.owner);
+            }    
         }
         else
         {
-            Debug.Log("Card can't be placed");
+            StartCoroutine(cardToPlay.owner.PickRowToEat(card));
         }
+    }
+
+    public void EatRow(float row, GameObject card, Player player)
+    {
+        int cats = 0;
+
+        foreach (GameObject c in boardRows[(int) row]) 
+        {
+            cats += c.GetComponent<Card>().GetCats();
+            c.SetActive(false); 
+        }
+        boardRows[(int)row].Clear();
+        AddCardToRow((int) row, card);
+        player.UpdateCats(-cats);
     }
 
     (int dif, int row) CheckRows(Card card)
@@ -92,7 +102,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    void SetupBoard()
+    public void SetupBoard()
     {
         for (int i = 0; i < numRows; i++) 
         {
@@ -111,13 +121,10 @@ public class Board : MonoBehaviour
     {
         if (row >= 0 && row < numRows)
         {
-            if (boardRows[row].Count < 5)
-            {
-                boardRows[row].Add(card);
-                card.SetActive(true);
-                card.transform.SetParent(boardTransform);
-                UpdateBoardPosition();
-            }
+            boardRows[row].Add(card);
+            card.SetActive(true);
+            card.transform.SetParent(boardTransform);
+            UpdateBoardPosition();
         }
     }
 }

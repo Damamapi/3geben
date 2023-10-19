@@ -5,17 +5,50 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private List<GameObject> hand = new List<GameObject>();
+    public List<GameObject> hand = new List<GameObject>();
     // public event Action<bool> OnCardOnHandChanged;
 
+    private float selectedRow;
+    bool hasRowBeenPicked = false;
+
     public GameObject pickedCard;
-    // private int cats = 0;
+
+    private int cats = 33;
 
     public HandDisplay handDisplay;
     public Board board;
     public Deck deck;
+    public RowIndicator rowIndicator;
 
     bool hasCardBeenPicked = false;
+
+    public void UpdateCats(int catsToDeduct)
+    {
+        cats += catsToDeduct;
+        Debug.Log(cats);
+    }
+
+    public IEnumerator PickRowToEat(GameObject card)
+    {
+        hasRowBeenPicked = false;
+        rowIndicator.gameObject.SetActive(true);
+        Row.RowSelected += RowPicked;
+
+        while (!hasRowBeenPicked)
+        {
+            yield return null;
+        }
+
+        rowIndicator.gameObject.SetActive(false);
+        Row.RowSelected -= RowPicked;
+        board.EatRow(selectedRow, card, this);
+    }
+
+    void RowPicked(float row)
+    {
+        selectedRow = row;
+        hasRowBeenPicked = true;
+    }
 
     public void CardPicked(GameObject card)
     {
@@ -29,19 +62,15 @@ public class Player : MonoBehaviour
 
     public IEnumerator PickCardToPlayCoroutine()
     {
-        // Reset this variable
         hasCardBeenPicked = false;
 
-        // Subscribe to the event
         HandCardInteraction.CardSelected += CardPicked;
 
-        // Wait until the card has been picked
         while (!hasCardBeenPicked)
         {
             yield return null;
         }
 
-        // Unsubscribe from the event
         HandCardInteraction.CardSelected -= CardPicked;
     }
 
@@ -54,6 +83,7 @@ public class Player : MonoBehaviour
     public void AddCardToHand(GameObject card) 
     {
         hand.Add(card);
+        card.GetComponent<Card>().owner = this;
         handDisplay.AddCardToHand(card);
         card.GetComponent<HandCardInteraction>().IsOnHand = true;
     }
